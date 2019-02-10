@@ -672,9 +672,9 @@ void ui_day_item_delete(unsigned reg)
 
 	const char *erase_warning =
 	    _("This item is recurrent. "
-	      "Delete (a)ll occurences or just this (o)ne?");
-	const char *erase_choices = _("[ao]");
-	const int nb_erase_choices = 2;
+	      "Delete (a)ll occurences or just this (o)ne or (u)ntil now?");
+	const char *erase_choices = _("[aou]");
+	const int nb_erase_choices = 3;
 
 	const char *note_warning =
 	    _("This item has a note attached to it. "
@@ -729,6 +729,16 @@ void ui_day_item_delete(unsigned reg)
 			io_set_modified();
 			ui_calendar_monthly_view_cache_set_invalid();
 			return;
+    case 3:
+			if (p->type == RECUR_EVNT) {
+		    struct event *ev = p->item.ev;
+		    struct recur_event *rev = p->item.rev;
+				date = ui_calendar_get_slctd_day_sec();
+		    recur_event_new(ev->mesg, ev->note, ev->day, ev->id, rev->rpt->type, rev->rpt->freq, date, &(rev->exc));
+			} // TODO Add Appointment
+			status_mesg("DEBUG", "DEBUG");
+			keys_wait_for_any_key(win[KEY].p);
+      return;
 		default:
 			return;
 		}
